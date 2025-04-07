@@ -1,0 +1,13 @@
+{
+  "resources/js/main.jsx": {
+    "file": "assets/main-CUzhxXHG.js",
+    "name": "main",
+    "src": "resources/js/main.jsx",
+    "isEntry": true
+  },
+  "resources/sass/app.scss": {
+    "file": "assets/app-D-sv12UV.css",
+    "src": "resources/sass/app.scss",
+    "isEntry": true
+  }
+}

@@ -1,0 +1,39 @@
+Ratio de solvabilité générale === capitaux propres / total bilan
+Ratio d’autonomie financière  === fonds propres / total bilan
+Ratio de liquidité général ou à court terme  === actif court terme (stock + dette clients) / passif court terme (dette four + det fiscle + dett sociale)
+Capacité de remboursement === flux de tresorerie disponibles / charges financieres
+Ratio de liquidité à long terme ===  actif long terme / passif long terme
+
+
+Taux de couverture de la dette  === resultat net d'exploitation / interet du d lentreprise
+
+
+
+
+Les donnes sont recuperee chaque jour.
+
+
+
+Tendance du Ratio de solvabilité générale === capitaux propres / total bilan
+Tendance du Ratio d’autonomie financière  === fonds propres / total bilan
+Tendance de la Capacité de remboursement === flux de tresorerie disponibles / charges financieres
+Tendance du Ratio de liquidité général ou à court terme  === actif court terme (stock + dette clients) / passif court terme (dette four + det fiscle + dett sociale)
+Tendance du Ratio de liquidité à long terme ===  actif ciculant ((actif court terme) - stock) / (dette a court terme)
+Tendance du Ratio de liquidité à long terme ===  (creance + disponibilite(tresoreie)) / (dette a court terme)
+Tendance du Taux de couverture de la dette  === resultat net d'exploitation / interet du d lentreprise
+
+
+
+
+Sites consultés
+
+
+https://agicap.com/fr/article/ratios-de-solvabilite-definition-calcul/ (
+Ratio de solvabilité générale = capitaux propres / totalité du passif
+Ratio d’autonomie financière = capitaux propres / total du bilan
+Ratio de liquidité générale = actif à court terme / passif à court terme
+
+
+
+)
+4-	Creg and Phil / count / their money : …………………………………………………………………………
