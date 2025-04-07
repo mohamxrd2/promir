@@ -597,6 +597,7 @@ class ComposerStaticInit968f73bcf5520ee401d641d0d79555ec
     public static $classMap = array (
         'App\\Classes\\Bilan' => __DIR__ . '/../..' . '/app/Classes/Bilan.php',
         'App\\Classes\\CalculationsClass' => __DIR__ . '/../..' . '/app/Classes/CalculationsClass.php',
+        'App\\Classes\\CalculeRevenuApi' => __DIR__ . '/../..' . '/app/Classes/CalculeRevenuApi.php',
         'App\\Classes\\CoteCalculationClass' => __DIR__ . '/../..' . '/app/Classes/CoteCalculationClass.php',
         'App\\Classes\\MainClass' => __DIR__ . '/../..' . '/app/Classes/MainClass.php',
         'App\\Console\\Commands\\UpdateChargeDateEcheance' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateChargeDateEcheance.php',

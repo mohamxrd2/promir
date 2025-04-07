@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'App\\Classes\\Bilan' => $baseDir . '/app/Classes/Bilan.php',
     'App\\Classes\\CalculationsClass' => $baseDir . '/app/Classes/CalculationsClass.php',
+    'App\\Classes\\CalculeRevenuApi' => $baseDir . '/app/Classes/CalculeRevenuApi.php',
     'App\\Classes\\CoteCalculationClass' => $baseDir . '/app/Classes/CoteCalculationClass.php',
     'App\\Classes\\MainClass' => $baseDir . '/app/Classes/MainClass.php',
     'App\\Console\\Commands\\UpdateChargeDateEcheance' => $baseDir . '/app/Console/Commands/UpdateChargeDateEcheance.php',
