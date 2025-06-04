@@ -38,7 +38,7 @@ class System_produit extends Model
     }
     
     public function approvisionnements(){
-        return $this->belongsToMany(Approvisionnement::class, 'approvisionnement_system_produit', 'system_produit_id', 'approvisionnement_id');
+        return $this->belongsToMany(Approvisionnement::class, 'approvisionnement_system_produits', 'system_produit_id', 'approvisionnement_id');
     }
 
 

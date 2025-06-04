@@ -66,6 +66,9 @@ function getChartColorsArray(chartId) {
     }
 }
 
+
+
+
 //basic bar
 var options = {
     series: [{
@@ -136,6 +139,9 @@ var options = {
         categories: [2001, 2002, 2003, 2004, 2005, 2006, 2007],
     },
 };
+
+
+
 
 var chart = new ApexCharts(document.querySelector("#GroupedChart"), options);
 chart.render();

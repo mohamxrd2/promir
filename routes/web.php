@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalysesController;
 use App\Models\Clients;
 use App\Models\Produit;
 use App\Models\Fournisseurs;
@@ -219,6 +220,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/compte de resultat index', [EtatsController::class, 'resultatIndex'])->name('compte_de_resultat');
     Route::get('/compte de tresorerie index', [CompteTresorerieController::class, 'tresorerieIndex'])->name('compte_de_tresorerie');
     Route::get('/compte de bilan index', [EtatsController::class, 'bilanIndex'])->name('compte_de_bilan');
+    Route::get('/analyses graphiques', [AnalysesController::class, 'index'])->name('analyses_graphiques');
     Route::get('/compte_resultat_in_range', [EtatsController::class, 'renderCompteResultatElementsBetweenDates'])->name('compte_resultat_elements');
     Route::get('/compte_bilan_on_date', [EtatsController::class, 'renderCompteBilanElementsOnDate'])->name('compte_bilan_on_date');
 
@@ -252,6 +254,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/detach produit from production/{idProduit}/{idProduction}', [ProductionsController::class, 'detach'])->name('produit.detach');
     Route::get('/detach produit from approvisionnement/{idProduit}/{idProduction}', [ApprovisionnementController::class, 'detach'])->name('produitOpfApprovisionnement.detach');
 
+    Route::post('/graph_data', [AnalysesController::class, 'graphData'])->name('graph_data');
     Route::post('/finalisation_avance', [AvanceClientController::class, 'finaliserAvance'])->name('finaliserAvanceClients');
     Route::post('/user/profile/update', [profilesManagementController::class, 'editeUserProfile'])->name('user.profile.update');
     Route::post('/edit_personnel_contrat', [ContratController::class, 'edite'])->name('contrat.edite');

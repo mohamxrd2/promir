@@ -86,7 +86,6 @@ class Bilan{
     }
     
 
-
     public static function terrain($date){
         try{
             $investissements = Investissements::where("system_client_id", MainClass::getSystemId())
@@ -130,6 +129,7 @@ class Bilan{
     }
     
     
+
     public static function avancesEtAcompte($date){
         try{
             $brut = AvanceClient::whereHas('ligneVente.vente.lignClientSystem', function($query){
@@ -181,17 +181,19 @@ class Bilan{
             ->sum(function($dette){
                 return $dette->montant_emprunte - $dette->montant_paye;
             });
-
+            
             $amorti = 0;
         }catch(Exception $e){
             $brut = 0;
             $amorti = 0;
-        }
+        }   
         $net = $brut;
         return [ round($brut,2), round($amorti, 2), round($net, 2)];
     }
     
     
+
+
     public static function dettesFournisseurs($date){
         try{
             $brut = detteFournisseur::whereHas('approvisionnementSystemProduit.produitsBrut', function($query){
@@ -229,7 +231,6 @@ class Bilan{
         return [ round($brut,2), round($amorti, 2), round($net, 2)];
     }
      
-    
     public static function autresDettes($date){
         try{
             $brut = Investissements::where('system_client_id', MainClass::getSystemId())
@@ -250,6 +251,7 @@ class Bilan{
     
     
     public static function dettesSocialesEtFiscales($date){
+        // fonction a faire apres
         try{
             $brut = 0;
             $amorti = 0;
@@ -262,6 +264,7 @@ class Bilan{
     }
 
     
+
     public static function constructions($date){
         try{
             $investissements = Investissements::where("system_client_id", MainClass::getSystemId())
@@ -301,8 +304,6 @@ class Bilan{
                 ->where('libelle', '!=', "Usine")
                 ->get();
 
-
-
             $brut = $investissements->sum('montant');
             $amorti = $investissements->sum(function ($inv) use ($date) {
                     $totalDays = Bilan::calculateTotalDays($inv->date_acquisition, $inv->duree_de_vie);
@@ -317,6 +318,7 @@ class Bilan{
         return [round($brut,2), round($amorti, 2), round($net, 2)];
     }
     
+
     
     public static function brevetsLicense($date){
         try{
@@ -342,46 +344,103 @@ class Bilan{
         $net = $brut - $amorti;
         return [ round($brut,2), round($amorti, 2), round($net, 2)];
     }
+
+
     
     public static function matierePremiere($date){
-        try{
+        try {
             $brut = System_produit::where("system_client_id", MainClass::getSystemId())
-            ->whereDate('created_at', '<=', $date)
-            ->get()
-            ->sum(function($produit){
-                return $produit->qte_stck * $produit->puv;
-            });
-            $amorti = 0; 
-        }catch(Exception $e){
-            $brut = 0;
+                ->with([
+                    'approvisionnements' => function ($query) use ($date) {
+                        $query->whereDate('approvisionnements.created_at', '>', $date);
+                    },
+                    'approvisionnements.produitsBruts',
+                    'lignesVentes' => function ($query) use ($date) {
+                        $query->whereDate('ligne_ventes.created_at', '>', $date);
+                    }
+                ])
+                ->get()
+                ->sum(function ($produit) {
+                    $qte_stck_actuelle = $produit->qte_stck ?? 0;
+                    // Quantité à soustraire (approvisionnements après la date)
+                    $qte_appro_apres_date = $produit->approvisionnements->sum(function ($appro){
+                        return $appro->produitsBruts->sum(function($produit){
+                            return $produit->pivot->quantite_entree;
+                        });
+                    });
+                    
+                    
+                    // Quantité à rajouter (lignesVentes après la date)
+                    $qte_sortie_apres_date = $produit->lignesVentes->sum('quantite_vendue');
+
+                    // Stock reconstruit à la date
+                    $stock_a_date = $qte_stck_actuelle - $qte_appro_apres_date + $qte_sortie_apres_date;
+
+                    return max(0, $stock_a_date) * $produit->puv;
+                });
+
+
+            $amorti = 0;
+
+        } catch (Exception $e) {
+
+            $brut = $e;
             $amorti = 0;
         }
+
         $net = $brut - $amorti;
-        return [ round($brut,2), round($amorti, 2), round($net, 2)];
+
+        return [round($brut, 2), round($amorti, 2), round($net, 2)];
     }
-    
-    public static function produitsFinis($date){
-        try{
-            $brut = ProduitTransforme::whereHas("productions.produitsBruts", function($query){
-                $query->where('system_client_id', MainClass::getSystemId());
-            })
-            ->whereDate('created_at', '<=', $date)
-            ->get()
-            ->sum(function($produit){
-                return $produit->qte_en_portions * $produit->prix_unitaire_portion;
+
+
+    public static function produitsFinis($date) {
+        try {
+            $clientId = MainClass::getSystemId();
+
+            // 1. Récupérer le stock actuel de tous les produits transformés
+            $produits = ProduitTransforme::withSum('productions', 'nbr_portions')
+                ->withSum('lignesVente', 'quantite_vendue')
+                ->whereHas('productions.produitsBruts', function ($q) use ($clientId) {
+                    $q->where('system_client_id', $clientId);
+                })
+                ->get();
+
+            $brut = $produits->sum(function ($produit) use ($date) {
+                $stock_actuel = $produit->qte_en_portions ?? 0;
+
+                // 2. Somme des productions depuis la date
+                $produites_recent = $produit->productions()
+                    ->whereDate('created_at', '>', $date)
+                    ->sum('nbr_portions');
+
+                // 3. Somme des ventes depuis la date
+                $vendues_recent = $produit->lignesVente()
+                    ->whereDate('created_at', '>', $date)
+                    ->sum('quantite_vendue');
+
+                // 4. Somme des livraisons depuis la date
+                
+                $produits_livres = $produit->livraisons()
+                    ->whereDate('created_at', '>', $date)
+                    ->sum('quantite_livree');
+
+                // 5. Stock à la date donnée
+                $stock_a_la_date = $stock_actuel - $produites_recent + $vendues_recent + $produits_livres;
+                // 6. Calcul du brut
+                return $stock_a_la_date * $produit->prix_unitaire_portion;
             });
 
-
-
-            $amorti = 0; 
-        }catch(Exception $e){
-            $brut = 0;
             $amorti = 0;
+            $net = $brut - $amorti;
+
+            return [ round($brut, 2), round($amorti, 2), round($net, 2) ];
+
+        } catch (Exception $e) {
+            return [0, 0, 0];
         }
-        $net = $brut - $amorti;
-        return [ round($brut,2), round($amorti, 2), round($net, 2)];
-    } 
-    
+    }
+
     public static function creanceClients($date){
         try{
             $brut = DettesClients::whereHas('ligneVente.vente.lignClientSystem', function($query) {
@@ -406,11 +465,24 @@ class Bilan{
     
     public static function disponiblites($date){
         try{
-            $brut = Caisses::where('system_client_id', MainClass::getSystemId())
-            ->whereDate('created_at', '<=', $date)
-            ->sum('solde');
-        
-            $amorti = 0; 
+            // On prend la première caisse du client
+            $caisseClie = Caisses::where('system_client_id', MainClass::getSystemId())
+                ->orderBy('id', 'asc')
+                ->firstOrFail();
+
+            // On récupère toutes les opérations APRES la date
+            $operationsApresDate = $caisseClie->operations()
+                ->whereDate('created_at', '>', $date)
+                ->get();
+
+            // On calcule le total des opérations après la date
+            $mouvementsApresDate = $operationsApresDate->sum(function($op){
+                return $op->type_operation == "Retrait" ? -$op->montant : $op->montant;
+            });
+
+            // Solde à la date = solde actuel - mouvements après la date
+            $brut = $caisseClie->montant - $mouvementsApresDate;
+            $amorti = 0;
         }catch(Exception $e){
             $brut = 0;
             $amorti = 0;

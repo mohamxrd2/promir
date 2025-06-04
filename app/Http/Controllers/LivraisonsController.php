@@ -140,6 +140,15 @@ class LivraisonsController extends Controller
 
             $produitConcerne = $livraison->systemProduit?$livraison->systemProduit:$livraison->produitTransforme;
            
+            
+            if($produitConcerne){
+                if($produitConcerne->qte_stck !== null){
+                    $produitConcerne->qte_stck += $livraison->quantite_livree;
+                }else{
+                    $produitConcerne->qte_en_portions += $livraison->quantite_livree;
+                }
+                $produitConcerne->update();
+            }
 
             return redirect()->back()->with(toastr()->success('Livraison annulée!'));
         } catch (ModelNotFoundException $e) {

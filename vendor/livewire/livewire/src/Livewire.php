@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void component($name, $class = null)
  * @method static void directive($name, $callback)
  * @method static \Livewire\Component new($name, $id = null)
- * @method static string mount($name, $params = [], $key = null)
+* @method static string mount($name, $params = [], $key = null)
  * @method static array snapshot($component)
  * @method static void fromSnapshot($snapshot)
  * @method static void listen($name, $callback)

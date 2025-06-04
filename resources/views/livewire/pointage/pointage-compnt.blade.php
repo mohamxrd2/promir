@@ -2,7 +2,6 @@
     Care about people's approval and you will be their prisoner.
 </div> -->
 <div>
-
     @if ($pageCourante == 'accueil')
         @if ($modalePointer)
         <div class="fixed inset-0 z-50 flex items-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none">

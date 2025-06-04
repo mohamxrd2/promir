@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Classes\CalculationsClass;
+use App\Classes\CoteCalculationClass;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -18,12 +19,18 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    /**
+
+    /** 
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
-     */
+    */
+
+
+
     public function index(){
+    //   dd(CoteCalculationClass::analyseCausalite(12));
+
         $today = Carbon::today()->format('Y-m-d');
         session([
             'chiffre_affaire' => CalculationsClass::chiffreAffaire($today, $today),

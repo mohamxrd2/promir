@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Approvisionnement extends Model
-{
+class Approvisionnement extends Model {
     use HasFactory;
     protected $fillable = [
         'reference_payement',
@@ -22,6 +21,8 @@ class Approvisionnement extends Model
     public function pivotApprovisionnementProduit(){
         return $this->hasMany(ApprovisionnementSystemProduit::class,'approvisionnement_id');
     }
+    
+
     
     public function produitsBruts(){
         return $this->belongsToMany(System_produit::class, 'approvisionnement_system_produits', 'approvisionnement_id', 'system_produit_id')->withPivot(['quantite_entree', 'prix_unitaire_achat', 'somme_reglee', 'dette_fournisseur_id']);

@@ -76,6 +76,7 @@ class CaissesController extends Controller
     }
 
 
+    
     public function delete($id){
         try {
             $compte = Caisses::findOrFail($id);
